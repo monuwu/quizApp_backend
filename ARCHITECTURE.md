@@ -1,5 +1,17 @@
 # Quiz Application - Workflow & Architecture
+Your Available Endpoints:
 
+GET /api/quizzes - Get all quizzes
+GET /api/quizzes/:id - Get quiz details
+POST /api/attempts/start - Start quiz attempt
+GET /api/attempts/:id - Get attempt details
+POST /api/attempts/:id/finalize - Finalize attempt
+GET /api/attempts/:id/results - Get results
+GET /api/attempts/user/:userId - Get user attempts
+POST /api/attempts/:attemptId/answers - Submit answer
+POST /api/attempts/:attemptId/answers/bulk - Submit multiple answers
+GET /api/attempts/:attemptId/answers - Get attempt answers
+GET /api/attempts/:attemptId/statistics - Get statistics
 ## System Overview
 
 This backend implements a complete quiz system with timer enforcement, real-time answer evaluation, and comprehensive result tracking.
