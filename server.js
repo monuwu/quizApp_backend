@@ -3,8 +3,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 require('dotenv').config();
 
-const { testConnection } = require('./config/database');
-const { createDatabaseIfNotExists } = require('./config/createDatabase');
 const { errorHandler } = require('./app/middleware/errorHandler');
 const quizRoutes = require('./app/routes/quizRoutes');
 const attemptRoutes = require('./app/routes/attemptRoutes');
@@ -26,8 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK', 
+  res.status(200).json({
+    status: 'OK',
     message: 'Quiz API is running',
     timestamp: new Date().toISOString()
   });
@@ -53,12 +51,7 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
-    // Create database if it doesn't exist
-    await createDatabaseIfNotExists();
-    
-    // Test database connection
-    await testConnection();
-    
+    // ✅ Prisma handles DB connection (Neon)
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
