@@ -9,6 +9,17 @@ async function seedDatabase() {
   try {
     console.log('Starting database seeding...');
 
+
+    // Insert default levels
+    await connection.execute(`
+      INSERT INTO "Level" (name, description, min_score) VALUES
+      ('Beginner', 'Entry level', 0),
+      ('Intermediate', 'Intermediate level', 50),
+      ('Advanced', 'Advanced level', 80)
+      ON CONFLICT (name) DO NOTHING;
+    `);
+    console.log('✅ Levels inserted');
+
     // Insert sample quizzes
     const [quizResult] = await connection.execute(`
       INSERT INTO quizzes (title, description, level, duration_minutes, passing_score) VALUES
@@ -16,7 +27,6 @@ async function seedDatabase() {
       ('Node.js Advanced', 'Advanced Node.js concepts and patterns', 'advanced', 45, 75),
       ('Express.js Intermediate', 'Express.js routing and middleware', 'intermediate', 40, 70)
     `);
-
     console.log('✅ Quizzes inserted');
 
     // Insert questions for Quiz 1 (JavaScript Basics)

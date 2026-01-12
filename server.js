@@ -6,6 +6,9 @@ require('dotenv').config();
 const { errorHandler } = require('./app/middleware/errorHandler');
 const quizRoutes = require('./app/routes/quizRoutes');
 const attemptRoutes = require('./app/routes/attemptRoutes');
+const authRoutes = require('./app/routes/authRoutes');
+const levelRoutes = require('./app/routes/levelRoutes');
+const agentRoutes = require('./app/routes/agentRoutes');
 
 const app = express();
 
@@ -34,6 +37,9 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/attempts', attemptRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/levels', levelRoutes);
+app.use('/api/agents', agentRoutes);
 
 // 404 handler
 app.use((req, res) => {
