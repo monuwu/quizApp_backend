@@ -5,9 +5,7 @@ const { AppError } = require('../middleware/errorHandler');
  * Answer Service - Business logic for answer submission and evaluation
  */
 class AnswerService {
-  /**
-   * Submit answer for a question in an attempt
-   */
+
   async submitAnswer(attemptId, questionId, selectedOptionIds) {
     const connection = await pool.getConnection();
 
