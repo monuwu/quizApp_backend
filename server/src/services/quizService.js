@@ -33,16 +33,16 @@ class QuizService {
    * Get quiz by ID with questions and options (without correct answers)
    */
   async getQuizDetails(quizId) {
-    const [quizzes] = await pool.execute(
+    const [quizResult] = await pool.execute(
       'SELECT id, title, description, level, duration_minutes, passing_score FROM quizzes WHERE id = $1 AND is_active = true',
       [quizId]
     );
 
-    if (!quizzes || quizzes.length === 0) {
+    if (!quizResult || quizResult.length === 0) {
       throw new AppError('Quiz not found', 404);
     }
 
-    const quiz = quizzes[0];
+    const quiz = quizResult[0];
 
     // Get questions - Fixed for PostgreSQL
     const [questions] = await pool.execute(
@@ -68,16 +68,16 @@ class QuizService {
    */
   async getQuizWithAnswers(quizId) {
     // Fixed placeholder to $1
-    const [quizzes] = await pool.execute(
+    const [quizData] = await pool.execute(
       'SELECT id, title, duration_minutes FROM quizzes WHERE id = $1',
       [quizId]
     );
 
-    if (quizzes.length === 0) {
+    if (quizData.length === 0) {
       throw new AppError('Quiz not found', 404);
     }
 
-    const quiz = quizzes[0];
+    const quiz = quizData[0];
 
     // Get questions - Fixed placeholder to $1
     const [questions] = await pool.execute(

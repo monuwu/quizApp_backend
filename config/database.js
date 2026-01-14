@@ -1,13 +1,10 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
+// Use Neon DB connection string from .env
 const dbConfig = {
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  max: 10, // connection pool size
+  connectionString: process.env.DATABASE_URL,
+  max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
 };
