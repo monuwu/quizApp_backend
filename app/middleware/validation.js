@@ -13,7 +13,7 @@ const validateAttemptNotExpired = async (req, res, next) => {
 
     const { pool } = require('../../config/database');
     const [attempts] = await pool.execute(
-      'SELECT expiration_time, status FROM quiz_attempts WHERE id = ?',
+      'SELECT expiration_time, status FROM quiz_attempts WHERE id = $1',
       [attemptId]
     );
 
@@ -28,7 +28,7 @@ const validateAttemptNotExpired = async (req, res, next) => {
     if (now > expirationTime && attempt.status === 'in_progress') {
       // Auto-expire the attempt
       await pool.execute(
-        'UPDATE quiz_attempts SET status = ?, end_time = ? WHERE id = ?',
+        'UPDATE quiz_attempts SET status = $1, end_time = $2 WHERE id = $3',
         ['expired', now, attemptId]
       );
       throw new AppError('Quiz attempt has expired', 403);

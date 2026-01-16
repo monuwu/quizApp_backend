@@ -14,7 +14,7 @@ class AnswerService {
 
       // Verify attempt exists and is active
       const [attempts] = await connection.execute(
-        'SELECT quiz_id, status, expiration_time FROM quiz_attempts WHERE id = ?',
+        'SELECT quiz_id, status, expiration_time FROM quiz_attempts WHERE id = $1',
         [attemptId]
       );
 
@@ -34,7 +34,7 @@ class AnswerService {
       if (now > new Date(attempt.expiration_time)) {
         // Auto-expire the attempt
         await connection.execute(
-          'UPDATE quiz_attempts SET status = ?, end_time = ? WHERE id = ?',
+          'UPDATE quiz_attempts SET status = $1, end_time = $2 WHERE id = $3',
           ['expired', now, attemptId]
         );
         throw new AppError('Quiz attempt has expired', 403);
@@ -42,7 +42,7 @@ class AnswerService {
 
       // Verify question belongs to the quiz
       const [questions] = await connection.execute(
-        'SELECT id, question_type, points FROM questions WHERE id = ? AND quiz_id = ?',
+        'SELECT id, question_type, points FROM questions WHERE id = $1 AND quiz_id = $2',
         [questionId, attempt.quiz_id]
       );
 
@@ -57,9 +57,9 @@ class AnswerService {
         throw new AppError('At least one option must be selected', 400);
       }
 
-      const placeholders = selectedOptionIds.map(() => '?').join(',');
+      const placeholders = selectedOptionIds.map((_, i) => `$${i + 1}`).join(',');
       const [options] = await connection.execute(
-        `SELECT id, is_correct FROM options WHERE id IN (${placeholders}) AND question_id = ?`,
+        `SELECT id, is_correct FROM options WHERE id IN (${placeholders}) AND question_id = $${selectedOptionIds.length + 1}`,
         [...selectedOptionIds, questionId]
       );
 
@@ -67,9 +67,47 @@ class AnswerService {
         throw new AppError('Invalid option selection', 400);
       }
 
+      // Fetch valid option IDs for the question
+      const validOptions = await connection.execute(
+        'SELECT id FROM options WHERE question_id = $1',
+        [questionId]
+      );
+      const validOptionIds = validOptions.map(opt => opt.id);
+
+      // Debug logging for troubleshooting
+      console.log('Selected option IDs:', selectedOptionIds);
+      console.log('Valid option IDs for question:', validOptionIds);
+
+      // Validate selection
+      const isSingle = question.question_type === 'single';
+      if (isSingle) {
+        if (
+          !Array.isArray(selectedOptionIds) ||
+          selectedOptionIds.length !== 1 ||
+          !validOptionIds.includes(selectedOptionIds[0])
+        ) {
+          throw new AppError(
+            `Invalid option selection: ${JSON.stringify(selectedOptionIds)}. Valid options: ${JSON.stringify(validOptionIds)}`,
+            400
+          );
+        }
+      } else {
+        // Multiple choice: all selected must be valid
+        if (
+          !Array.isArray(selectedOptionIds) ||
+          selectedOptionIds.length === 0 ||
+          !selectedOptionIds.every(id => validOptionIds.includes(id))
+        ) {
+          throw new AppError(
+            `Invalid option selection: ${JSON.stringify(selectedOptionIds)}. Valid options: ${JSON.stringify(validOptionIds)}`,
+            400
+          );
+        }
+      }
+
       // Get all correct options for this question
       const [correctOptions] = await connection.execute(
-        'SELECT id FROM options WHERE question_id = ? AND is_correct = true',
+        'SELECT id FROM options WHERE question_id = $1 AND is_correct = true',
         [questionId]
       );
 
@@ -82,7 +120,7 @@ class AnswerService {
 
       // Check if answer already exists (update scenario)
       const [existingAnswers] = await connection.execute(
-        'SELECT id FROM answers WHERE attempt_id = ? AND question_id = ?',
+        'SELECT id FROM answers WHERE attempt_id = $1 AND question_id = $2',
         [attemptId, questionId]
       );
 
@@ -90,8 +128,8 @@ class AnswerService {
         // Update existing answer
         await connection.execute(
           `UPDATE answers 
-          SET selected_option_ids = ?, is_correct = ?, points_earned = ?, answered_at = ?
-          WHERE id = ?`,
+          SET selected_option_ids = $1, is_correct = $2, points_earned = $3, answered_at = $4
+          WHERE id = $5`,
           [JSON.stringify(selectedOptionIds), isCorrect, pointsEarned, now, existingAnswers[0].id]
         );
       } else {
@@ -99,7 +137,7 @@ class AnswerService {
         await connection.execute(
           `INSERT INTO answers 
           (attempt_id, question_id, selected_option_ids, is_correct, points_earned, answered_at)
-          VALUES (?, ?, ?, ?, ?, ?)`,
+          VALUES ($1, $2, $3, $4, $5, $6)`,
           [attemptId, questionId, JSON.stringify(selectedOptionIds), isCorrect, pointsEarned, now]
         );
       }
@@ -154,7 +192,7 @@ class AnswerService {
         q.points as max_points
       FROM answers a
       JOIN questions q ON a.question_id = q.id
-      WHERE a.attempt_id = ?
+      WHERE a.attempt_id = $1
       ORDER BY q.order_number`,
       [attemptId]
     );
@@ -178,7 +216,7 @@ class AnswerService {
         SUM(CASE WHEN is_correct = 0 THEN 1 ELSE 0 END) as incorrect_answers,
         SUM(points_earned) as total_points_earned
       FROM answers
-      WHERE attempt_id = ?`,
+      WHERE attempt_id = $1`,
       [attemptId]
     );
 
@@ -186,13 +224,13 @@ class AnswerService {
     const [attemptInfo] = await pool.execute(
       `SELECT qa.quiz_id 
       FROM quiz_attempts qa
-      WHERE qa.id = ?`,
+      WHERE qa.id = $1`,
       [attemptId]
     );
 
     if (attemptInfo.length > 0) {
       const [questionCount] = await pool.execute(
-        'SELECT COUNT(*) as total_questions FROM questions WHERE quiz_id = ?',
+        'SELECT COUNT(*) as total_questions FROM questions WHERE quiz_id = $1',
         [attemptInfo[0].quiz_id]
       );
       
