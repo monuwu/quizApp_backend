@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Quiz {
+  id              Int           @id @default(autoincrement())
+  title           String        @db.VarChar(255)
+  description     String?
+  level           String        @db.VarChar(20)
+  durationMinutes Int           @map("duration_minutes")
+  passingScore    Int?          @default(70) @map("passing_score")
+  isActive        Boolean?      @default(true) @map("is_active")
+  createdAt       DateTime?     @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime?     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  questions       Question[]
+  quizAttempts    QuizAttempt[]
+
+  @@index([level], map: "idx_level")
+  @@index([isActive], map: "idx_active")
+  @@map("quizzes")
+}
+
+model Question {
+  id           Int       @id @default(autoincrement())
+  quizId       Int       @map("quiz_id")
+  questionText String    @map("question_text")
+  questionType String?   @default("single") @map("question_type") @db.VarChar(20)
+  points       Int?      @default(1)
+  orderNumber  Int       @map("order_number")
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt    DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  answers      Answer[]
+  options      Option[]
+  quiz         Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([quizId], map: "idx_quiz_id")
+  @@map("questions")
+}
+
+model Option {
+  id          Int       @id @default(autoincrement())
+  questionId  Int       @map("question_id")
+  optionText  String    @map("option_text")
+  isCorrect   Boolean?  @default(false) @map("is_correct")
+  orderNumber Int       @map("order_number")
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([questionId], map: "idx_question_id")
+  @@map("options")
+}
+
+model QuizAttempt {
+  id             Int       @id @default(autoincrement())
+  quizId         Int       @map("quiz_id")
+  userId         Int?      @map("user_id")
+  startTime      DateTime  @default(now()) @map("start_time") @db.Timestamp(6)
+  endTime        DateTime? @map("end_time") @db.Timestamp(6)
+  expirationTime DateTime  @map("expiration_time") @db.Timestamp(6)
+  status         String?   @default("in_progress") @db.VarChar(20)
+  score          Int?      @default(0)
+  totalPoints    Int?      @default(0) @map("total_points")
+  percentage     Decimal?  @default(0.00) @db.Decimal(5, 2)
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  answers        Answer[]
+  quiz           Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([expirationTime], map: "idx_expiration")
+  @@index([status], map: "idx_status")
+  @@index([userId], map: "idx_user_id")
+  @@map("quiz_attempts")
+}
+
+model Answer {
+  id                Int         @id @default(autoincrement())
+  attemptId         Int         @map("attempt_id")
+  questionId        Int         @map("question_id")
+  selectedOptionIds Json        @map("selected_option_ids")
+  isCorrect         Boolean?    @default(false) @map("is_correct")
+  pointsEarned      Int?        @default(0) @map("points_earned")
+  answeredAt        DateTime?   @default(now()) @map("answered_at") @db.Timestamp(6)
+  attempt           QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  question          Question    @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([attemptId, questionId], map: "unique_attempt_question")
+  @@index([attemptId], map: "idx_attempt_id")
+  @@map("answers")
+}
+
+
+model Level {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(50)
+  description String?
+  min_score   Int
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([name], map: "idx_levels_name")
+  @@map("levels")
+}
+
+model OtpVerification {
+  id             Int          @id @default(autoincrement())
+  sales_agent_id Int
+  otp_code       String       @db.VarChar(10)
+  expires_at     DateTime     @db.Timestamp(6)
+  verified       Boolean?     @default(false)
+  created_at     DateTime?    @default(now()) @db.Timestamp(6)
+  sales_agent    SalesAgent   @relation(fields: [sales_agent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([sales_agent_id], map: "idx_otp_sales_agent_id")
+  @@index([verified], map: "idx_otp_verified")
+  @@map("otp_verifications")
+}
+
+model SalesAgent {
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(255)
+  email             String              @unique @db.VarChar(255)
+  phone             String?             @unique @db.VarChar(20)
+  password_hash     String              @db.VarChar(255)
+  is_active         Boolean?            @default(true)
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?           @default(now()) @db.Timestamp(6)
+  otp_verifications OtpVerification[]
+
+  @@index([email], map: "idx_sales_agents_email")
+  @@index([phone], map: "idx_sales_agents_phone")
+  @@map("sales_agents")
+}
