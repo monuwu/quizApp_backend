@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "question": "What is the largest mammal in the world?",
+    "image": "/images/question1.jpg",
+    "answers": [
+      { "id": "a", "letter": "A", "text": "African Elephant", "isCorrect": false },
+      { "id": "b", "letter": "B", "text": "Blue Whale", "isCorrect": true },
+      { "id": "c", "letter": "C", "text": "Giraffe", "isCorrect": false },
+      { "id": "d", "letter": "D", "text": "Polar Bear", "isCorrect": false }
+    ],
+    "points": 10
+  },
+  {
+    "id": 2,
+    "question": "Which planet is known as the Red Planet?",
+    "image": "/images/question2.jpg",
+    "answers": [
+      { "id": "a", "letter": "A", "text": "Venus", "isCorrect": false },
+      { "id": "b", "letter": "B", "text": "Mars", "isCorrect": true },
+      { "id": "c", "letter": "C", "text": "Jupiter", "isCorrect": false },
+      { "id": "d", "letter": "D", "text": "Saturn", "isCorrect": false }
+    ],
+    "points": 10
+  },
+  {
+    "id": 3,
+    "question": "What is the capital of France?",
+    "image": "/images/question3.jpg",
+    "answers": [
+      { "id": "a", "letter": "A", "text": "London", "isCorrect": false },
+      { "id": "b", "letter": "B", "text": "Berlin", "isCorrect": false },
+      { "id": "c", "letter": "C", "text": "Paris", "isCorrect": true },
+      { "id": "d", "letter": "D", "text": "Madrid", "isCorrect": false }
+    ],
+    "points": 10
+  },
+  {
+    "id": 4,
+    "question": "Who painted the Mona Lisa?",
+    "image": "/images/question4.jpg",
+    "answers": [
+      { "id": "a", "letter": "A", "text": "Vincent van Gogh", "isCorrect": false },
+      { "id": "b", "letter": "B", "text": "Pablo Picasso", "isCorrect": false },
+      { "id": "c", "letter": "C", "text": "Leonardo da Vinci", "isCorrect": true },
+      { "id": "d", "letter": "D", "text": "Michelangelo", "isCorrect": false }
+    ],
+    "points": 10
+  },
+  {
+    "id": 5,
+    "question": "What is the smallest country in the world?",
+    "image": "/images/question5.jpg",
+    "answers": [
+      { "id": "a", "letter": "A", "text": "Monaco", "isCorrect": false },
+      { "id": "b", "letter": "B", "text": "Vatican City", "isCorrect": true },
+      { "id": "c", "letter": "C", "text": "San Marino", "isCorrect": false },
+      { "id": "d", "letter": "D", "text": "Liechtenstein", "isCorrect": false }
+    ],
+    "points": 10
+  },
+  {
+    "id": 6,
+    "question": "Which element has the chemical symbol 'O'?",
+    "image": "/images/question6.jpg",
+    "answers": [
+      { "id": "a", "letter": "A", "text": "Gold", "isCorrect": false },
+      { "id": "b", "letter": "B", "text": "Oxygen", "isCorrect": true },
+      { "id": "c", "letter": "C", "text": "Silver", "isCorrect": false },
+      { "id": "d", "letter": "D", "text": "Osmium", "isCorrect": false }
+    ],
+    "points": 10
+  },
+  {
+    "id": 7,
+    "question": "In which year did World War II end?",
+    "image": "/images/question7.jpg",
+    "answers": [
+      { "id": "a", "letter": "A", "text": "1943", "isCorrect": false },
+      { "id": "b", "letter": "B", "text": "1944", "isCorrect": false },
+      { "id": "c", "letter": "C", "text": "1945", "isCorrect": true },
+      { "id": "d", "letter": "D", "text": "1946", "isCorrect": false }
+    ],
+    "points": 10
+  },
+  {
+    "id": 8,
+    "question": "What is the largest ocean on Earth?",
+    "image": "/images/question8.jpg",
+    "answers": [
+      { "id": "a", "letter": "A", "text": "Atlantic Ocean", "isCorrect": false },
+      { "id": "b", "letter": "B", "text": "Indian Ocean", "isCorrect": false },
+      { "id": "c", "letter": "C", "text": "Arctic Ocean", "isCorrect": false },
+      { "id": "d", "letter": "D", "text": "Pacific Ocean", "isCorrect": true }
+    ],
+    "points": 10
+  },
+  {
+    "id": 9,
+    "question": "How many continents are there on Earth?",
+    "image": "/images/question9.jpg",
+    "answers": [
+      { "id": "a", "letter": "A", "text": "5", "isCorrect": false },
+      { "id": "b", "letter": "B", "text": "6", "isCorrect": false },
+      { "id": "c", "letter": "C", "text": "7", "isCorrect": true },
+      { "id": "d", "letter": "D", "text": "8", "isCorrect": false }
+    ],
+    "points": 10
+  },
+  {
+    "id": 10,
+    "question": "What is the speed of light?",
+    "image": "/images/question10.jpg",
+    "answers": [
+      { "id": "a", "letter": "A", "text": "299,792,458 m/s", "isCorrect": true },
+      { "id": "b", "letter": "B", "text": "150,000,000 m/s", "isCorrect": false },
+      { "id": "c", "letter": "C", "text": "500,000,000 m/s", "isCorrect": false },
+      { "id": "d", "letter": "D", "text": "1,000,000,000 m/s", "isCorrect": false }
+    ],
+    "points": 10
+  }
+]

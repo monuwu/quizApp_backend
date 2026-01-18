@@ -1,0 +1,15 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" fill="white"/>
+  <g transform="translate(3.65, 7)">
+    <svg width="24.7" height="18" viewBox="0 0 24.7 18" fill="none">
+      <!-- Right Orange -->
+      <path d="M5.44 0 L24.7 0 L24.7 18 L14.26 18 Z" fill="#FC5100"/>
+      <!-- Left Orange Bottom -->
+      <path d="M0.02 8.2 L10.32 8.2 L10.32 18 L0.02 18 Z" fill="#FC5100"/>
+      <!-- Left Blue -->
+      <path d="M0 0 L19.26 0 L19.26 18 L8.82 18 Z" fill="#0045DD"/>
+      <!-- Right Blue Bottom -->
+      <path d="M14.38 8.2 L24.68 8.2 L24.68 18 L14.38 18 Z" fill="#0045DD"/>
+    </svg>
+  </g>
+</svg>
