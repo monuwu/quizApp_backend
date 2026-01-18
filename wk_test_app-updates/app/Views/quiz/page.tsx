@@ -6,21 +6,22 @@ import "react-toastify/dist/ReactToastify.css";
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Lottie from "lottie-react";
 import Navbar from "@/components/quizlevelNavbar";
-import questionsData from "@/data/questions.json";
+// import questionsData from "@/data/questions.json";
+import { useTranslationContext } from "@/context/TranslationContext";
 
 interface Answer {
   id: string;
   letter: string;
-  text: string;
+  text: { en: string; fr: string };
   isCorrect: boolean;
 }
 
 interface Question {
   id: number;
-  question: string;
+  question: { en: string; fr: string };
   image: string;
   answers: Answer[];
   points: number;
@@ -28,19 +29,68 @@ interface Question {
 
 export default function QuizPage() {
   const router = useRouter();
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [totalPoints, setTotalPoints] = useState(0);
-  const [answeredQuestions, setAnsweredQuestions] = useState<boolean[]>(
-    new Array(questionsData.length).fill(false)
-  );
+  const [answeredQuestions, setAnsweredQuestions] = useState<boolean[]>([]);
   const [timer, setTimer] = useState(300); // 5 minutes in seconds
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [shakeAnswerId, setShakeAnswerId] = useState<string | null>(null);
 
-  const questions: Question[] = questionsData;
-  const currentQuestion = questions[currentQuestionIndex];
+  const { language: rawLanguage } = useTranslationContext();
+  // Robust fallback: only allow 'en' or 'fr', else fallback to 'en'
+  const language = rawLanguage === 'fr' ? 'fr' : rawLanguage === 'en' ? 'en' : 'en';
+  // Debug: log language value
+  if (typeof window !== 'undefined') {
+    // eslint-disable-next-line no-console
+    console.log('Current language:', language);
+  }
+  const searchParams = useSearchParams();
+  const level = searchParams.get("level") || "beginner";
+
+  // Fetch questions from backend API on mount or when level changes
+  useEffect(() => {
+    async function fetchQuestions() {
+      try {
+        const res = await fetch(`/api/quizzes?level=${level}`);
+        if (!res.ok) throw new Error("Failed to fetch questions");
+        const data = await res.json();
+        // If backend returns { questions: [...] }
+        const questionsArr = Array.isArray(data) ? data : data.questions || [];
+        setQuestions(questionsArr);
+        setAnsweredQuestions(new Array(questionsArr.length).fill(false));
+        setCurrentQuestionIndex(0);
+      } catch (err) {
+        setQuestions([]);
+        setAnsweredQuestions([]);
+      }
+    }
+    fetchQuestions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [level]);
+
+  const currentQuestion = questions[currentQuestionIndex] || questions[0];
+  // If no questions for this level, show a message
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center font-sans">
+        <Navbar showTimer={false} showTotalEarned={false} />
+        <div className="text-xl text-red-600 mb-4">No questions found for this quiz level.</div>
+        <pre className="bg-gray-100 text-xs p-2 rounded border max-w-xl overflow-x-auto">
+          {JSON.stringify({
+            language,
+            level,
+            availableLevels: [],
+            questionsDataLength: 0
+          }, null, 2)}
+        </pre>
+      </div>
+    );
+  }
+  // Calculate progress percentage
+  const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
 
   // Timer - counts down from 5 minutes
@@ -111,13 +161,20 @@ export default function QuizPage() {
     }, 2000);
   };
 
-  const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-
   return (
-    <div className="h-screen overflow-hidden font-sans">
+    <div className="h-screen overflow-hidden font-sans" key={language}>
       <ToastContainer />
       <Navbar showTimer={true} showTotalEarned={true} totalPoints={totalPoints} timer={timer} />
       <div className="flex flex-col items-start px-5 w-full h-full flex-none order-1 self-stretch z-0 overflow-y-auto">
+        {/* DEBUG INFO - REMOVE AFTER FIXED */}
+        <pre className="bg-gray-100 text-xs p-2 rounded border max-w-xl overflow-x-auto mb-4">
+          {JSON.stringify({
+            language,
+            level,
+            currentQuestion,
+            questionsLength: questions.length
+          }, null, 2)}
+        </pre>
         <div className="flex flex-row justify-center items-center py-[134.4px] px-4 w-full max-w-350 flex-none order-0 self-stretch mx-auto">
           <div className="flex flex-col items-start p-0 gap-6 w-2xl max-w-2xl flex-none order-0">
             {/* Header Section */}
@@ -164,15 +221,16 @@ export default function QuizPage() {
             {/* Question Card */}
             <div className="flex flex-col items-start p-[31.8px] w-full bg-white/95 border border-[rgba(225,231,239,0.5)] shadow-[0px_8px_24px_-8px_rgba(0,0,0,0.12)] backdrop-blur-md rounded-4xl flex-none order-1 self-stretch">
               <div className="flex flex-row items-start gap-4 w-full">
-                {/* Question Text */}
+                {/* Question Text (image removed for debug) */}
                 <div className="flex flex-col items-start p-0 flex-1">
                   <h2
                     className="font-bold text-2xl leading-8 flex items-center text-[#0F1729] flex-none order-0"
                     style={{ fontFamily: "Segoe UI" }}
                   >
-                    {currentQuestion.question}
+                    {(language === 'en' || language === 'fr') && currentQuestion.question[language] ? currentQuestion.question[language] : currentQuestion.question.en}
                   </h2>
                 </div>
+                {/* Image rendering temporarily removed for troubleshooting blank page */}
                 
                 {/* Feedback Icon */}
                 {showFeedback && (
@@ -235,7 +293,7 @@ export default function QuizPage() {
                       className="h-6 font-medium text-base leading-6 flex items-center text-[#0F1729] flex-none order-0 self-stretch"
                       style={{ fontFamily: "Inter" }}
                     >
-                      {answer.text}
+                      {(language === 'en' || language === 'fr') && answer.text[language] ? answer.text[language] : answer.text.en}
                     </span>
                   </div>
 
@@ -281,6 +339,7 @@ export default function QuizPage() {
           </div>
         </div>
       </div>
+
     </div>
   );
 }

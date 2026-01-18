@@ -14,13 +14,31 @@ const TranslationContext = createContext<TranslationContextProps | undefined>(un
 export const TranslationProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguageState] = useState<Language>("en");
 
+  // On client, update language from localStorage if available
   useEffect(() => {
-    i18n.changeLanguage(language);
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("language");
+      if (stored === "en" || stored === "fr") {
+        setLanguageState(stored);
+        i18n.changeLanguage(stored);
+        return;
+      }
+    }
+    i18n.changeLanguage("en");
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("language", language);
+    }
   }, [language]);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     i18n.changeLanguage(lang);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("language", lang);
+    }
   };
 
   return (

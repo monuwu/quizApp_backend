@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import DefaultNavbar from "@/components/DefaultNavbar";
 import { useTranslation } from "react-i18next";
 import { ChevronDown, ArrowRight, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
@@ -113,6 +114,7 @@ export default function Signup() {
 
   return (
     <>
+      <DefaultNavbar />
       <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[url('/background.svg')] bg-cover">
         <div className="w-full max-w-[448px] bg-white/95 border border-slate-200 rounded-3xl shadow-xl backdrop-blur-md px-6 py-10 sm:px-10 relative">
           {/* Logo */}

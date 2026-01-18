@@ -8,7 +8,7 @@ import Image from "next/image";
 interface Answer {
   id: string;
   letter: string;
-  text: string;
+  text: { en: string; fr: string };
 }
 
 
@@ -16,11 +16,12 @@ interface QuestionPageProps {
   questionNumber?: number;
   totalQuestions?: number;
   points?: number;
-  question?: string;
+  question?: { en: string; fr: string };
   answers?: Answer[];
   correctAnswerId?: string;
   onAnswer?: (isCorrect: boolean, points: number) => void;
   autoNextDelay?: number; // ms
+  language?: 'en' | 'fr';
 }
 
 
@@ -28,16 +29,17 @@ export default function QuestionPage({
   questionNumber = 3,
   totalQuestions = 8,
   points = 15,
-  question = "What is the largest mammal in the world?",
+  question = { en: "What is the largest mammal in the world?", fr: "Quel est le plus grand mammifère du monde ?" },
   answers = [
-    { id: "a", letter: "A", text: "African Elephant" },
-    { id: "b", letter: "B", text: "Blue Whale" },
-    { id: "c", letter: "C", text: "Giraffe" },
-    { id: "d", letter: "D", text: "Polar Bear" },
+    { id: "a", letter: "A", text: { en: "African Elephant", fr: "Éléphant d'Afrique" } },
+    { id: "b", letter: "B", text: { en: "Blue Whale", fr: "Baleine bleue" } },
+    { id: "c", letter: "C", text: { en: "Giraffe", fr: "Girafe" } },
+    { id: "d", letter: "D", text: { en: "Polar Bear", fr: "Ours polaire" } },
   ],
   correctAnswerId,
   onAnswer,
   autoNextDelay = 1200,
+  language = 'en',
 }: QuestionPageProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [animation, setAnimation] = useState<"correct" | "wrong" | null>(null);
@@ -122,7 +124,7 @@ export default function QuestionPage({
                 className="font-bold text-lg sm:text-xl md:text-2xl leading-6 sm:leading-7 md:leading-8 flex items-center text-[#0F1729] flex-none order-0"
                 style={{ fontFamily: "Segoe UI" }}
               >
-                {question}
+                {question[language]}
               </h2>
             </div>
           </div>
@@ -179,7 +181,7 @@ export default function QuestionPage({
                       className="font-medium text-sm sm:text-base leading-5 sm:leading-6 flex items-center text-[#0F1729] flex-none order-0 self-stretch"
                       style={{ fontFamily: "Inter" }}
                     >
-                      {answer.text}
+                      {answer.text[language]}
                     </span>
                   </div>
                 </button>

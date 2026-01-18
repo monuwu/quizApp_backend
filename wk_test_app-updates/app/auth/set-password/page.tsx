@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import DefaultNavbar from "@/components/DefaultNavbar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Lock, EyeOff, Eye, ArrowRight } from "lucide-react";
@@ -82,6 +83,7 @@ export default function SetPassword() {
 
   return (
     <>
+      <DefaultNavbar />
       <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[url('/background.svg')] bg-cover">
         <div className="w-full max-w-[448px] bg-white/95 border border-slate-200 rounded-3xl shadow-xl backdrop-blur-md px-6 py-10 sm:px-10 relative">
           {/* Logo */}

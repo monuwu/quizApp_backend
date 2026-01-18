@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useTranslationContext } from "../context/TranslationContext";
+import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 
@@ -39,12 +40,18 @@ export default function Navbar({ showTimer = false, showTotalEarned = false, tot
   const timerTextColor = showTimer && typeof timer === "number" && timer <= 120 ? "text-red-600" : "text-[#0F1729]";
 
   const { language, setLanguage } = useTranslationContext();
+  const { t } = useTranslation();
+  // Use static labels to avoid hydration mismatch
+  // Always show both language names in their own language to avoid hydration mismatch
+  // Always show both language names in their own language to avoid hydration mismatch
   const LANGUAGES = [
     { code: "en", label: "English" },
-    { code: "fr", label: "French" },
+    { code: "fr", label: "Français" },
   ];
   const [dropdown, setDropdown] = useState(false);
-  const lang = LANGUAGES.find((l) => l.code === language) || LANGUAGES[0];
+  // Use static label for SSR/CSR consistency
+  // Always show both language names in their own language to avoid hydration mismatch
+  const langLabel = LANGUAGES.find(l => l.code === language)?.label || "English";
 
   return (
     <header className="sticky top-0 flex flex-col items-start px-2 sm:px-5 w-full h-auto min-h-[68.8px] bg-[#F8FAFCCC] border-b-[0.8px] border-[#E1E7EF] z-50 flex-none order-0 self-stretch">
@@ -108,7 +115,7 @@ export default function Navbar({ showTimer = false, showTotalEarned = false, tot
         {showTotalEarned && (
           <div className="flex flex-row items-center py-2 px-3 sm:px-4 gap-2 w-auto min-w-[180px] h-10 bg-linear-to-r from-[#E7B008] to-[#FF9900] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1),0px_2px_4px_-2px_rgba(0,0,0,0.1)] rounded-[20px] flex-none order-2">
             <span className="font-semibold text-base leading-6 flex items-center text-white flex-none order-0" style={{ fontFamily: 'Inter' }}>
-              Total Earned:
+              {t('total_earned')}
             </span>
             <Image
               src="/trophy.svg"
@@ -138,7 +145,7 @@ export default function Navbar({ showTimer = false, showTotalEarned = false, tot
               height={20}
               className="object-contain mr-1"
             />
-            <span className="text-[#65758B] font-medium text-base">{lang.label}</span>
+            <span className="text-[#65758B] font-medium text-base">{langLabel}</span>
             <ChevronDown size={18} className={`ml-1 text-[#65758B] transition-transform ${dropdown ? 'rotate-180' : ''}`} />
           </button>
           {dropdown && (

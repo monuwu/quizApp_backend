@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Phone, Lock, EyeOff, Eye, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,10 +10,9 @@ import questionsData from "@/data/questions.json";
 
 export default function Hero() {
   const router = useRouter();
-  
+  const { t } = useTranslation();
   // 1. Initialize the Ref
-  const dropdownRef = useRef<HTMLDivElement>(null); 
-
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({ phone: "", password: "" });
   const countryOptions = [
     { code: "+224", short: "GN" },
@@ -21,11 +21,9 @@ export default function Hero() {
   const [country, setCountry] = useState(countryOptions[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
   // Safety check for questionsData in case file is empty
   const totalQuestions = questionsData?.length || 0;
   const timeLimit = 10;
-
   // 2. Fixed Click Outside Logic
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -33,16 +31,13 @@ export default function Hero() {
         setDropdownOpen(false);
       }
     }
-
     if (dropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-    
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownOpen]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     router.push("/quiz-mode");
@@ -68,10 +63,10 @@ export default function Hero() {
         {/* Heading */}
         <div className="mt-6 text-center">
           <h1 className="text-[30px] leading-9 font-bold text-[#0F1729]">
-            Ready to Test Your Knowledge?
+            {t('ready_test_knowledge')}
           </h1>
           <p className="mt-2 text-base text-[#65758B]">
-            Login to begin the assessment
+            {t('login_to_begin')}
           </p>
         </div>
 
@@ -80,7 +75,7 @@ export default function Hero() {
           
           {/* Phone Input */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#0F1729]">Phone Number</label>
+            <label className="text-sm font-medium text-[#0F1729]">{t('phone_number')}</label>
 
             {/* 3. Removed overflow-hidden so dropdown can pop out */}
             <div className="flex w-full h-[53px] bg-white border border-[#E1E7EF] rounded-[20px] relative">
@@ -139,7 +134,7 @@ export default function Hero() {
 
           {/* Password Input */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#0F1729]">Password</label>
+            <label className="text-sm font-medium text-[#0F1729]">{t('password')}</label>
             
             {/* 4. Fixed broken HTML structure here */}
             <div className="relative h-[53px]">
@@ -158,7 +153,7 @@ export default function Hero() {
                 type="button"
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? t('hide_password') : t('show_password')}
               >
                 {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
@@ -172,7 +167,7 @@ export default function Hero() {
               className="text-sm text-[#0045DD] hover:underline" 
               onClick={() => router.push('/reset-password')}
             >
-              Forgot password?
+              {t('forgot_password')}
             </button>
           </div>
 
@@ -181,28 +176,28 @@ export default function Hero() {
             type="submit"
             className="w-full h-[60px] flex items-center justify-center gap-2 bg-[#0045DD] text-white rounded-xl shadow-[0_0_40px_-8px_rgba(0,69,221,0.4)] text-lg font-semibold hover:bg-[#003bb8] active:scale-[0.98] transition-all"
           >
-            Login →
+            {t('login')} →
           </button>
         </form>
 
         {/* Footer */}
         <div className="mt-8 space-y-4">
           <p className="text-center text-sm text-[#65758B]">
-            Don’t have an account?{" "}
+            {t('dont_have_account')} {" "}
             <button 
               className="text-[#0045DD] font-semibold hover:underline" 
               onClick={() => router.push('/signup')}
             >
-              Create Account
+              {t('create_account')}
             </button>
           </p>
 
           <div className="flex justify-center gap-2 text-sm text-[#65758B] text-[12px]">
-            <span>{totalQuestions} questions</span>
+            <span>{totalQuestions} {t('questions')}</span>
             <span>•</span>
-            <span>{timeLimit} minutes</span>
+            <span>{timeLimit} {t('minutes')}</span>
             <span>•</span>
-            <span>Instant results</span>
+            <span>{t('instant_results')}</span>
           </div>
         </div>
       </div>

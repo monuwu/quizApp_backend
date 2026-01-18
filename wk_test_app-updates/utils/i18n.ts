@@ -13,7 +13,22 @@ const resources = {
       advanced: "Advanced",
       advanced_desc: "Expert level! Only for the brave.",
       questions: "questions",
-      requires: "Requires 70% on previous level"
+      requires: "Requires 70% on previous level",
+      english: "English",
+      french: "French",
+      total_earned: "Total Earned:",
+      ready_test_knowledge: "Ready to Test Your Knowledge?",
+      login_to_begin: "Login to begin the assessment",
+      phone_number: "Phone Number",
+      password: "Password",
+      hide_password: "Hide password",
+      show_password: "Show password",
+      forgot_password: "Forgot password?",
+      login: "Login",
+      dont_have_account: "Don’t have an account?",
+      create_account: "Create Account",
+      minutes: "minutes",
+      instant_results: "Instant results"
     }
   },
   fr: {
@@ -27,7 +42,22 @@ const resources = {
       advanced: "Avancé",
       advanced_desc: "Niveau expert ! Seulement pour les courageux.",
       questions: "questions",
-      requires: "Nécessite 70% au niveau précédent"
+      requires: "Nécessite 70% au niveau précédent",
+      english: "Anglais",
+      french: "Français",
+      total_earned: "Total gagné :",
+      ready_test_knowledge: "Prêt à tester vos connaissances ?",
+      login_to_begin: "Connectez-vous pour commencer l'évaluation",
+      phone_number: "Numéro de téléphone",
+      password: "Mot de passe",
+      hide_password: "Masquer le mot de passe",
+      show_password: "Afficher le mot de passe",
+      forgot_password: "Mot de passe oublié ?",
+      login: "Connexion",
+      dont_have_account: "Vous n'avez pas de compte ?",
+      create_account: "Créer un compte",
+      minutes: "minutes",
+      instant_results: "Résultats instantanés"
     }
   }
 };
